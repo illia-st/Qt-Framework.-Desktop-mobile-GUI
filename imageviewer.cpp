@@ -18,8 +18,10 @@ void ImageViewer::onParseFolder(const QUrl& url_folder){
         QStringList filters;
         filters << "*.jpg" << "*.png" << "*.jpeg" << "*.bmp" << "*.svg";
         QStringList filenames = directory.entryList(filters, QDir::Files|QDir::NoDotAndDotDot);
+        // opened the directory to parse
         foreach(QString filename, filenames) {
-            QString picture {folder + "/" + filename};
+            // create URL of the file
+            QString picture {url_folder.toString() + "/" + filename};
             m_images.append(picture);
         }
         // inform that new images are ready
