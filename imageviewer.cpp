@@ -9,6 +9,7 @@ ImageViewer::ImageViewer(QObject* parent): QObject(parent)
 
 void ImageViewer::onParseFolder(const QUrl& url_folder){
     try{
+        qInfo() << url_folder;
         QString folder = url_folder.toLocalFile();
         qInfo() << "To parse folder " << folder;
         // clear main container from previous values

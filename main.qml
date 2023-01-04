@@ -14,12 +14,26 @@ Window {
             console.log("Files have been updated");
             console.log("Updating ListModel");
             list_model.clear();
-//            table_model.clear();
-//            console.log(viewer.images);
+            table_model.clear();
+            var row = {picture_1: "", picture_2: "", picture_3: ""};
+            var cleared = true;
             for(var i = 0; i < viewer.images.length; ++i){
                 console.log(viewer.images[i]);
                 list_model.append({path: viewer.images[i]});
-//                table_model.append({path: viewer.images[i]});
+                if((i + 1) % 3 === 1){
+                    row.picture_1 = viewer.images[i];
+                    cleared = false;
+                }else if((i + 1) % 3 === 2){
+                    row.picture_2 = viewer.images[i];
+                }else{
+                    row.picture_3 = viewer.images[i];
+                    table_model.appendRow(row);
+                    row = {picture_1: "", picture_2: "", picture_3: ""};
+                    cleared = true;
+                }
+            }
+            if(!cleared){
+                table_model.appendRow(row);
             }
         }
     }
@@ -36,70 +50,76 @@ Window {
         if(view_type === 0){
             list_view.visible = true;
             table_view.visible = false;
+            path_view.visible = false;
         }else if(view_type === 1){
             list_view.visible = false;
             table_view.visible = true;
+            path_view.visible = false;
         }else{
-
+            list_view.visible = false;
+            table_view.visible = false;
+            path_view.visible = true;
         }
     }
 
     ColumnLayout{
         anchors.fill: parent
         anchors.margins: 5
-        GridLayout{
+        RowLayout{
             Layout.alignment: Qt.AlignTop
-            columns: 2
-            Button{
-                Layout.column: 0
-                id: menuButton
-                text: "View type"
-                onClicked: menu.open()
-                Menu{
-                    id: menu
-                    MenuItem{
-                        text: "ListView"
-                        onTriggered:{
-                            view_type = 0;
-                            changeView();
+            ColumnLayout{
+                Layout.alignment: Qt.AlignTop | Qt.AlignLeft
+                Button{
+                    id: menuButton
+                    text: "View type"
+                    onClicked: menu.open()
+                    Menu{
+                        id: menu
+                        MenuItem{
+                            text: "ListView"
+                            onTriggered:{
+                                view_type = 0;
+                                changeView();
+                            }
                         }
-                    }
-                    MenuItem{
-                        text: "TableView"
-                        onTriggered:{
-                            view_type = 1;
-                            changeView();
+                        MenuItem{
+                            text: "TableView"
+                            onTriggered:{
+                                view_type = 1;
+                                changeView();
+                            }
                         }
-                    }
-                    MenuItem{
-                        text: "PathView"
-                        onTriggered:{
-                            view_type = 2;
-                            changeView();
+                        MenuItem{
+                            text: "PathView"
+                            onTriggered:{
+                                view_type = 2;
+                                changeView();
+                            }
                         }
                     }
                 }
             }
-            Button{
-                Layout.column: 1
-                Layout.alignment: Qt.AlignRight
-                id: selectFolderButton
-                text: "Click to select folder"
-                onClicked: folderDialog.open()
-                FolderDialog{
-                    id: folderDialog
-                    currentFolder: viewer.folder
-                    folder: StandardPaths.standardLocations(StandardPaths.PicturesLocation)[0]
-                    onAccepted: viewer.parseFolder(folder)
+            ColumnLayout{
+                Layout.alignment: Qt.AlignTop | Qt.AlignRight
+                Button{
+                    id: selectFolderButton
+                    text: "Click to select folder"
+                    onClicked: folderDialog.open()
+                    FolderDialog{
+                        id: folderDialog
+                        currentFolder: viewer.folder
+                        folder: StandardPaths.standardLocations(StandardPaths.PicturesLocation)[0]
+                        onAccepted: viewer.parseFolder(folder)
+                    }
                 }
             }
-
         }
         RowLayout{
             Layout.alignment: Qt.AlignTop
             Rectangle{
                 id: canvas
                 color: "red"
+//                anchors.fill: parent
                 Layout.fillHeight: true
                 Layout.fillWidth: true
                 ListModel{
@@ -161,108 +181,92 @@ Window {
                             picture_1: "file://home/illia_st/Downloads/melih-karaahmet-fb-Yqt_f9DQ-unsplash.jpg",
                             picture_2: "file://home/illia_st/Downloads/melih-karaahmet-Tkz9YXDn3FY-unsplash.jpg",
                             picture_3: "file://home/illia_st/Downloads/tower_backlight_night_city_137081_1920x1080.jpg"
+                        },
+                        {
+                            picture_1: "file://home/illia_st/Downloads/melih-karaahmet-fb-Yqt_f9DQ-unsplash.jpg",
+                            picture_2: "file://home/illia_st/Downloads/melih-karaahmet-Tkz9YXDn3FY-unsplash.jpg",
+                            picture_3: "file://home/illia_st/Downloads/tower_backlight_night_city_137081_1920x1080.jpg"
+                        },
+                        {
+                            picture_1: "file://home/illia_st/Downloads/melih-karaahmet-fb-Yqt_f9DQ-unsplash.jpg",
+                            picture_2: "file://home/illia_st/Downloads/melih-karaahmet-Tkz9YXDn3FY-unsplash.jpg",
+                            picture_3: "file://home/illia_st/Downloads/tower_backlight_night_city_137081_1920x1080.jpg"
                         }
                     ]
                 }
 
                 TableView{
+                    anchors.fill: parent
                     id: table_view
                     visible: false
                     model: table_model
-                    delegate:DelegateChooser{
-                         DelegateChoice{
-                             column: 0
-                             delegate: Rectangle{
-                                 anchors.horizontalCenter: parent.horizontalCenter
-                                 anchors.topMargin: 100;
-                                 anchors.bottomMargin: 100;
-                                 width: 400
-                                 height: 300
-                                 Image{
-                                     anchors.fill: parent
-                                     width: 400
-                                     height: 300
-                                     source: model.display
-                                   MouseArea{
-                                         property bool big: false
-                                         anchors.fill: parent
-                                         onClicked:{
-                                             if(big){
-                                                 parent.width = canvas.width;
-                                                 parent.parent.width = canvas.width;
-                                             }else{
-                                                 parent.width = 400;
-                                                 parent.parent.width = 400;
-                                             }
+                    delegate:Rectangle{
+                        id: base
+                        implicitHeight: 250
+                        implicitWidth: 225
+                        Image{
+                            anchors.fill: parent
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            fillMode: Image.PreserveAspectFit
+                            source: model.display
+                            height: base.height - 50
+                            width: base.width - 50
+                          MouseArea{
+                                property bool big: false
+                                anchors.fill: parent
+                                onClicked:{
+                                    if(!big){
+                                        parent.width = parent.width + 50;
+                                        parent.height = parent.height + 50;
+                                    }else{
+                                        parent.width = parent.width - 50;
+                                        parent.height = parent.height - 50;
+                                    }
 
-                                             big = !big;
-                                         }
-                                     }
-                                 }
-                             }
-                         }
-                         DelegateChoice{
-                             column: 1
-                             delegate: Rectangle{
-                                 anchors.horizontalCenter: parent.horizontalCenter
-                                 anchors.topMargin: 100;
-                                 anchors.bottomMargin: 100;
-                                 implicitWidth: 400
-                                 implicitHeight: 300
-                                 Image{
-                                     anchors.fill: parent
-                                     width: 400
-                                     height: 300
-                                     source: model.display
-                                   MouseArea{
-                                         property bool big: false
-                                         anchors.fill: parent
-                                         onClicked:{
-                                             if(big){
-                                                 parent.width = canvas.width;
-                                                 parent.parent.width = canvas.width;
-                                             }else{
-                                                 parent.width = 400;
-                                                 parent.parent.width = 400;
-                                             }
 
-                                             big = !big;
-                                         }
-                                     }
-                                 }
-                             }
-                         }
-                         DelegateChoice{
-                             column: 2
-                             delegate: Rectangle{
-                                 anchors.horizontalCenter: parent.horizontalCenter
-                                 anchors.topMargin: 100;
-                                 anchors.bottomMargin: 100;
-                                 width: 400
-                                 height: 300
-                                 Image{
-                                     anchors.fill: parent
-                                     width: 400
-                                     height: 300
-                                     source: model.display
-                                   MouseArea{
-                                         property bool big: false
-                                         anchors.fill: parent
-                                         onClicked:{
-                                             if(big){
-                                                 parent.width = canvas.width;
-                                                 parent.parent.width = canvas.width;
-                                             }else{
-                                                 parent.width = 400;
-                                                 parent.parent.width = 400;
-                                             }
+                                    big = !big;
+                                }
+                            }
+                        }
+                    }
+                    ScrollBar.vertical: ScrollBar {}
+                }
 
-                                             big = !big;
-                                         }
-                                     }
-                                 }
-                             }
-                         }
+                PathView{
+                    id: path_view
+                    anchors.fill: parent
+//                    anchors.verticalCenter: parent.verticalCenter
+//                    anchors.horizontalCenter: parent.horizontalCenter
+                    model: list_model
+                    visible: false
+                    delegate: Column{
+                        id: wrapper
+                        opacity: PathView.isCurrentItem ? 1 : 0.5
+                        Image{
+                            anchors.horizontalCenter: nameText.horizontalCenter
+                            width: 64; height: 64
+                            source: path
+                            MouseArea{
+                                  property bool big: false
+                                  anchors.fill: parent
+                                  onClicked:{
+                                      if(!big){
+                                          parent.width *= 2;
+                                          parent.height *= 2;
+                                      }else{
+                                          parent.width /= 2;
+                                          parent.height /= 2;
+                                      }
+                                      big = !big;
+                                  }
+                              }
+                        }
+                    }
+                    path: Path {
+                        startX: 120; startY: 100
+                        PathQuad { x: 120; y: 25; controlX: 260; controlY: 75 }
+                        PathQuad { x: 120; y: 100; controlX: -20; controlY: 75 }
                     }
                 }
             }
