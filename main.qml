@@ -124,15 +124,6 @@ Window {
                 Layout.fillWidth: true
                 ListModel{
                     id: list_model
-                    ListElement{
-                        path: "file://home/illia_st/Downloads/melih-karaahmet-fb-Yqt_f9DQ-unsplash.jpg"
-                    }
-                    ListElement{
-                        path: "file://home/illia_st/Downloads/melih-karaahmet-Tkz9YXDn3FY-unsplash.jpg"
-                    }
-                    ListElement{
-                        path: "file://home/illia_st/Downloads/tower_backlight_night_city_137081_1920x1080.jpg"
-                    }
                 }
                 ListView{
                     visible: true
@@ -176,23 +167,6 @@ Window {
                     TableModelColumn {display: "picture_1"}
                     TableModelColumn {display: "picture_2"}
                     TableModelColumn {display: "picture_3"}
-                    rows:[
-                        {
-                            picture_1: "file://home/illia_st/Downloads/melih-karaahmet-fb-Yqt_f9DQ-unsplash.jpg",
-                            picture_2: "file://home/illia_st/Downloads/melih-karaahmet-Tkz9YXDn3FY-unsplash.jpg",
-                            picture_3: "file://home/illia_st/Downloads/tower_backlight_night_city_137081_1920x1080.jpg"
-                        },
-                        {
-                            picture_1: "file://home/illia_st/Downloads/melih-karaahmet-fb-Yqt_f9DQ-unsplash.jpg",
-                            picture_2: "file://home/illia_st/Downloads/melih-karaahmet-Tkz9YXDn3FY-unsplash.jpg",
-                            picture_3: "file://home/illia_st/Downloads/tower_backlight_night_city_137081_1920x1080.jpg"
-                        },
-                        {
-                            picture_1: "file://home/illia_st/Downloads/melih-karaahmet-fb-Yqt_f9DQ-unsplash.jpg",
-                            picture_2: "file://home/illia_st/Downloads/melih-karaahmet-Tkz9YXDn3FY-unsplash.jpg",
-                            picture_3: "file://home/illia_st/Downloads/tower_backlight_night_city_137081_1920x1080.jpg"
-                        }
-                    ]
                 }
 
                 TableView{
@@ -244,7 +218,6 @@ Window {
                         id: wrapper
                         opacity: PathView.isCurrentItem ? 1 : 0.5
                         Image{
-                            anchors.horizontalCenter: nameText.horizontalCenter
                             width: 64; height: 64
                             source: path
                             MouseArea{
